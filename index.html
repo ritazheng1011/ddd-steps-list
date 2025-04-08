@@ -9,52 +9,79 @@
     />
     <meta name="Description" content="Demonstration for ddd-steps-list" />
 
-    <style>
-      :root,
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      #demo {
-        margin: var(--ddd-spacing-2);
-      }
-      ddd-steps-list {
-        margin: var(--ddd-spacing-2);
-        border: var(--ddd-border-md);
-        border-radius: var(--ddd-radius-lg);
-      }
-      ddd-steps-list:hover {
-        box-shadow: var(--ddd-boxShadow-sm);
-      }
-      #example {
-        --ddd-steps-list-font-size: var(--ddd-font-size-l);
-        background-color: var(--ddd-accent-2);
-        color: var(--ddd-primary-17);
-      }
-    </style>
     <title>ddd-steps-list</title>
+    <script type="module" src="./ddd-steps-list.js"></script>
   </head>
 
   <body>
-    <div id="demo">
-      <h1>ddd-steps-list</h1>
-      <!-- this is going to do whatever the tag's defaults are -->
-      <h2>EXAMPLE STEP LIST</h2>
-      <ddd-steps-list>
-        <ddd-steps-list-item label="First step"
-          >First step description</ddd-steps-list-item
-        >
-        <ddd-steps-list-item label="Second step"
-          >Second step description</ddd-steps-list-item
-        >
-        <ddd-steps-list-item label="Third step"
-          >Third step description</ddd-steps-list-item
-        >
-      </ddd-steps-list>
-    </div>
+    <h2>Start Planning Your Penn State Experience</h2>
+    <p>
+      Take the next steps toward a future at Penn State Altoona. Find admission
+      requirements, tuition and financial aid, and other information to get you
+      ready to apply.
+    </p>
 
-    <script type="module" src="./ddd-steps-list.js"></script>
-    <script type="module" src="./ddd-steps-list-item.js"></script>
+    <ddd-steps-list ddd-primary="default">
+      <ddd-steps-list-item>
+        <h3>Choose your enrollment period</h3>
+        <p>
+          You will need to complete the FAFSA each year for financial aid
+          consideration:
+        </p>
+        <ul>
+          <li>Summer 2024</li>
+          <li>Fall 2024/Spring 2025</li>
+        </ul>
+      </ddd-steps-list-item>
+
+      <ddd-steps-list-item>
+        <h3>Get help</h3>
+        <p>Utilize these resources for assistance with Federal Aid:</p>
+        <ul>
+          <li>
+            Call the Federal Student Aid Information Center at 1-800-433-3243
+          </li>
+          <li>
+            Visit the Federal Student Aid (FSA) site at
+            <a href="https://studentaid.gov">FAFSA: Applying for Aid</a>
+          </li>
+          <li>Follow Federal Student Aid on YouTube</li>
+        </ul>
+      </ddd-steps-list-item>
+
+      <ddd-steps-list-item>
+        <h3>Ensure Receipt of Email</h3>
+        <p>Ensure your email settings allow messages from these addresses:</p>
+        <ul>
+          <li><a href="mailto:osa-noreply@psu.edu">osa-noreply@psu.edu</a></li>
+          <li><a href="mailto:OSAward@psu.edu">OSAward@psu.edu</a></li>
+          <li>
+            <a href="mailto:FederalStudentAidFAFSA@cpsemail.ed.gov"
+              >FederalStudentAidFAFSA@cpsemail.ed.gov</a
+            >
+          </li>
+          <li>
+            <a href="mailto:FederalStudentAidPIN@cpsemail.ed.gov"
+              >FederalStudentAidPIN@cpsemail.ed.gov</a
+            >
+          </li>
+        </ul>
+      </ddd-steps-list-item>
+
+      <ddd-steps-list-item>
+        <h3>Review Your Student Aid Report</h3>
+        <p>
+          After submitting the FAFSA, you'll receive a Student Aid Report (SAR)
+          via email.
+        </p>
+        <ul>
+          <li>
+            Verify all information is correct and make necessary corrections
+          </li>
+          <li>Contact Federal Aid Center with your DRN number if needed</li>
+          <li>Print the revised copy for your records</li>
+        </ul>
+      </ddd-steps-list-item>
+    </ddd-steps-list>
   </body>
 </html>

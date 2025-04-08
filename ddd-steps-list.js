@@ -17,43 +17,17 @@ export class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
     return "ddd-steps-list";
   }
 
-  constructor() {
-    super();
-    this.steps = [];
-    this.title = "";
-    this.t = this.t || {};
-    this.t = {
-      ...this.t,
-      title: "Title",
-    };
-  }
-
   // Lit reactive properties
   static get properties() {
     return {
       ...super.properties,
-      steps: { type: Array },
-      title: { type: String },
+      dddPrimary: { type: String, attribute: "ddd-primary", reflect: true },
     };
   }
 
-  firstUpdated() {
-    this.updateSteps(); //not sure what this does, searched it up
-  }
-
-  updated(changedProperties) {
-    if (changedProperties.has("steps")) {
-      this.updateSteps();
-    }
-  }
-
-  updateSteps() {
-    const children = [...this.children].filter(
-      (child) => child.tagName.toLowerCase() === "ddd-steps-list-item"
-    );
-    children.forEach((child, index) => {
-      child.step = index + 1;
-    });
+  constructor() {
+    super();
+    this.dddPrimary = "default";
   }
 
   // Lit scoped styles
@@ -63,60 +37,7 @@ export class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
       css`
         :host {
           display: block;
-          color: var(--ddd-theme-primary);
-          background-color: var(--ddd-theme-accent);
-          font-family: var(--ddd-font-navigation);
-        }
-        .wrapper {
-          display: flex;
-          flex-direction: column;
-          margin: var(--ddd-spacing-2);
-          padding: var(--ddd-spacing-4);
-        }
-        .step-container {
-          display: flex;
-          align-items: center;
-          gap: var(--ddd-spacing-2);
-        }
-        body {
-          font-family: "open sans", sans-serif;
-          background: #f1f1f1;
-        }
-        #content {
-          margin: 40px auto;
-          text-align: center;
-          width: 600px;
-        }
-        #content h1 {
-          text-transform: uppercase;
-          font-weight: 700;
-          margin: 0 0 40px 0;
-          font-size: 25px;
-          line-height: 30px;
-        }
-        .circle {
-          width: 200px;
-          height: 200px;
-          line-height: 200px;
-          border-radius: 50%; /* the magic */
-          -moz-border-radius: 50%;
-          -webkit-border-radius: 50%;
-          text-align: center;
-          color: white;
-          font-size: 16px;
-          text-transform: uppercase;
-          font-weight: 700;
-          margin: 0 auto 40px;
-        }
-
-        .blue {
-          background-color: #3498db;
-        }
-        .green {
-          background-color: #16a085;
-        }
-        .red {
-          background-color: #e74c3c;
+          padding: 16px;
         }
       `,
     ];
@@ -124,18 +45,138 @@ export class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
 
   // Lit render the HTML
   render() {
-    return html` <div class="wrapper">
-      <slot></slot>
-    </div>`;
+    return html`<slot></slot>`;
   }
 
-  /**
-   * haxProperties integration via file reference
-   */
-  static get haxProperties() {
-    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
-      .href;
+  firstUpdated() {
+    this._validateChildren();
+  }
+
+  updated(changedProps) {
+    if (changedProps.has("dddPrimary")) {
+      this._validateChildren();
+    }
+  }
+
+  _validateChildren() {
+    const children = Array.from(this.children);
+    let stepCount = 0;
+
+    children.forEach((child) => {
+      const tag = child.tagName.toLowerCase();
+      if (tag !== "ddd-steps-list-item") {
+        console.warn(`Invalid child removed: <${tag}>`);
+        this.removeChild(child);
+      } else {
+        stepCount++;
+        child.step = stepCount;
+        child.setAttribute("step", stepCount);
+        child.requestUpdate("step", 0);
+        if (this.dddPrimary) {
+          child.setAttribute("data-primary", this.dddPrimary);
+        } else {
+          child.removeAttribute("data-primary");
+        }
+      }
+    });
   }
 }
-
 globalThis.customElements.define(DddStepsList.tag, DddStepsList);
+
+//new class
+
+import { LitElement, html, css } from "lit";
+import "./ddd-steps-list-item.js";
+
+class DddStepsListItem extends LitElement {
+  static get properties() {
+    return {
+      step: { type: Number, reflect: true },
+    };
+  }
+
+  constructor() {
+    super();
+    this.step = 0;
+  }
+
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        margin-bottom: var(--ddd-spacing-6, 24px);
+      }
+      :host(:last-child) {
+        margin-bottom: 0;
+      }
+
+      .step-wrapper {
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .step-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--ddd-theme-default-beaverBlue, #1e407c);
+        background-color: white;
+        color: var(--ddd-theme-default-beaverBlue, #1e407c);
+        text-align: center;
+        line-height: 48px;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 16px;
+        flex-shrink: 0;
+      }
+
+      :host([data-primary="7"]) .step-circle {
+        border-color: var(--ddd-theme-default-coolGray, #7d8a99);
+        color: var(--ddd-theme-default-coolGray, #7d8a99);
+      }
+
+      .step-content {
+        flex: 1;
+      }
+
+      .step-content ::slotted(h3) {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--ddd-text-color, #1e407c);
+      }
+
+      .step-content ::slotted(p) {
+        margin: 8px 0;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .step-content ::slotted(ul) {
+        margin: 8px 0 0 0;
+        padding-left: 20px;
+      }
+
+      @media (max-width: 600px) {
+        .step-wrapper {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .step-circle {
+          margin-bottom: var(--ddd-spacing-2, 8px);
+        }
+      }
+    `;
+  }
+
+  render() {
+    return html`
+      <div class="step-wrapper">
+        <div class="step-circle">${this.step}</div>
+        <div class="step-content"><slot></slot></div>
+      </div>
+    `;
+  }
+}
+customElements.define("ddd-steps-list-item", DddStepsListItem);
