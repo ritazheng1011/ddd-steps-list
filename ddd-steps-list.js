@@ -79,8 +79,6 @@ globalThis.customElements.define(DddStepsList.tag, DddStepsList);
 
 //new class
 
-import { LitElement, html, css } from "lit";
-
 class DddStepsListItem extends LitElement {
   static get properties() {
     return {
