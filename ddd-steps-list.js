@@ -13,34 +13,25 @@ import "./ddd-steps-list-item.js";
  * @element ddd-steps-list
  */
 export class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
-  static get tag() {
-    return "ddd-steps-list";
-  }
-
-  // Lit reactive properties
   static get properties() {
     return {
-      ...super.properties,
-      dddPrimary: { type: String, attribute: "ddd-primary", reflect: true },
+      dddPrimary: { type: Boolean, attribute: "ddd-primary", reflect: true },
     };
   }
 
   constructor() {
     super();
-    this.dddPrimary = "default";
+    this.dddPrimary = false;
   }
 
   // Lit scoped styles
   static get styles() {
-    return [
-      super.styles,
-      css`
-        :host {
-          display: block;
-          padding: 16px;
-        }
-      `,
-    ];
+    return;
+    css`
+      :host {
+        display: block;
+      }
+    `;
   }
 
   // Lit render the HTML
@@ -52,33 +43,36 @@ export class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
     this._validateChildren();
   }
 
-  updated(changedProps) {
-    if (changedProps.has("dddPrimary")) {
-      this._validateChildren();
-    }
-  }
-
   _validateChildren() {
     const children = Array.from(this.children);
     let stepCount = 0;
-
     children.forEach((child) => {
       const tag = child.tagName.toLowerCase();
       if (tag !== "ddd-steps-list-item") {
-        console.warn(`Invalid child removed: <${tag}>`);
         this.removeChild(child);
       } else {
         stepCount++;
         child.step = stepCount;
-        child.setAttribute("step", stepCount);
-        child.requestUpdate("step", 0);
         if (this.dddPrimary) {
-          child.setAttribute("data-primary", this.dddPrimary);
+          child.setAttribute("data-primary", "");
         } else {
           child.removeAttribute("data-primary");
         }
       }
     });
+  }
+
+  updated(changedProps) {
+    if (changedProps.has("dddPrimary")) {
+      const items = this.querySelectorAll("ddd-steps-list-item");
+      items.forEach((item) => {
+        if (this.dddPrimary) {
+          item.dddPrimary = this.dddPrimary;
+        } else {
+          item.removeAttribute("data-primary");
+        }
+      });
+    }
   }
 }
 globalThis.customElements.define(DddStepsList.tag, DddStepsList);
@@ -86,7 +80,6 @@ globalThis.customElements.define(DddStepsList.tag, DddStepsList);
 //new class
 
 import { LitElement, html, css } from "lit";
-import "./ddd-steps-list-item.js";
 
 class DddStepsListItem extends LitElement {
   static get properties() {
@@ -130,42 +123,13 @@ class DddStepsListItem extends LitElement {
         flex-shrink: 0;
       }
 
-      :host([data-primary="7"]) .step-circle {
-        border-color: var(--ddd-theme-default-coolGray, #7d8a99);
-        color: var(--ddd-theme-default-coolGray, #7d8a99);
+      :host([data-primary]) .step-circle {
+        background-color: var(--ddd-theme-default-beaverBlue, #1e407c);
+        color: var(--ddd-theme-default-white, #fff);
       }
 
       .step-content {
         flex: 1;
-      }
-
-      .step-content ::slotted(h3) {
-        margin: 0;
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--ddd-text-color, #1e407c);
-      }
-
-      .step-content ::slotted(p) {
-        margin: 8px 0;
-        font-size: 16px;
-        color: #333;
-      }
-
-      .step-content ::slotted(ul) {
-        margin: 8px 0 0 0;
-        padding-left: 20px;
-      }
-
-      @media (max-width: 600px) {
-        .step-wrapper {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .step-circle {
-          margin-bottom: var(--ddd-spacing-2, 8px);
-        }
       }
     `;
   }
