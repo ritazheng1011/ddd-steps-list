@@ -33,13 +33,20 @@ class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
     return css`
       :host {
         display: block;
+        position: relative;
+        background-color: var(--ddd-theme-default-white, #ffffff);
+        padding: var(--ddd-spacing-4, 24px);
+      }
+
+      :host([data-accent]) {
+        background-color: var(--ddd-theme-default-warmGray8, #f5f3f0);
       }
     `;
   }
 
   // Lit render the HTML
   render() {
-    return html`<slot></slot>`;
+    return html` <slot></slot> `;
   }
 
   firstUpdated() {
@@ -50,31 +57,25 @@ class DddStepsList extends DDDSuper(I18NMixin(LitElement)) {
     const children = Array.from(this.children);
     let stepCount = 0;
     children.forEach((child) => {
-      const tag = child.tagName.toLowerCase();
-      if (tag !== "ddd-steps-list-item") {
-        this.removeChild(child);
-      } else {
-        stepCount++;
-        child.step = stepCount;
+      if (child.tagName.toLowerCase() === "ddd-steps-list-item") {
+        const isTitle = child.hasAttribute("data-title");
+        child.step = isTitle ? null : ++stepCount;
+
+        //change
         if (this.dddPrimary) {
           child.setAttribute("data-primary", "");
         } else {
           child.removeAttribute("data-primary");
         }
+      } else {
+        this.removeChild(child);
       }
     });
   }
 
   updated(changedProps) {
     if (changedProps.has("dddPrimary")) {
-      const items = this.querySelectorAll("ddd-steps-list-item");
-      items.forEach((item) => {
-        if (this.dddPrimary) {
-          item.dddPrimary = this.dddPrimary;
-        } else {
-          item.removeAttribute("data-primary");
-        }
-      });
+      this._validateChildren();
     }
   }
 }
